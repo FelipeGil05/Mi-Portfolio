@@ -1,5 +1,7 @@
 // src/components/Projects.jsx
 import { useState } from "react";
+import gestionclub from "../assets/img/gestionclub.png";
+import distribuidora from "../assets/img/distribuidora.png";
 
 export default function Projects() {
     const [isOpen, setIsOpen] = useState(false);
@@ -13,14 +15,14 @@ export default function Projects() {
 
     const projects = [
         {
-            img: "src/assets/img/gestionclub-web.jpg",
+            img: gestionclub,
             title: "Sistema Gestión de Clubes",
             desc: "Sistema para administrar socios, actividades internas y aspectos financieros de un club.",
             tech: "React, .NET, MySQL",
             github: "https://github.com/Juarba/Front-end-GestionClub"
         },
         {
-            img: "src/assets/img/distribuidora-web.jpg",
+            img: distribuidora,
             title: "E-commerce Distribuidora-Mayorista",
             desc: "Plataforma de comercio electrónico con carrito, pagos y panel de administración de un supermercado Mayorista.",
             tech: "React, .NET, MySQL",
@@ -90,11 +92,11 @@ export default function Projects() {
             {isOpen && (
                 <div
                     id="projectModal"
-                    className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[9999]"
+                    className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[9999] px-4 sm:px-6"
                     onClick={closeModal}
                 >
                     <div
-                        className="bg-white/10 glass-effect rounded-xl overflow-hidden max-w-4xl w-full relative"
+                        className="bg-white/10 glass-effect rounded-xl overflow-hidden w-full max-w-4xl relative"
                         onClick={(e) => e.stopPropagation()}
                     >
                         <button
