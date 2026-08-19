@@ -14,13 +14,26 @@ export default function ScrollTopButton() {
     }, []);
 
     const scrollToTop = () => {
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        const start = window.scrollY;
+        const duration = 700;
+        const startTime = performance.now();
+
+        const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
+
+        const step = (now) => {
+            const elapsed = now - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            window.scrollTo(0, start * (1 - easeOutCubic(progress)));
+            if (progress < 1) requestAnimationFrame(step);
+        };
+
+        requestAnimationFrame(step);
     };
 
     return (
         <button
             onClick={scrollToTop}
-            className={`fixed bottom-6 right-6 z-50 bg-[#10b981] hover:bg-[#059669] text-white p-3 rounded-full shadow-lg transition-all duration-300
+            className={`fixed bottom-6 right-6 z-50 bg-void border border-accent/40 text-accent hover:bg-accent hover:text-void p-3 rounded-full shadow-[0_0_18px_rgba(56,224,255,0.25)] transition-all duration-300
         ${visible ? "opacity-100" : "opacity-0 pointer-events-none"}`}
         >
             <svg
