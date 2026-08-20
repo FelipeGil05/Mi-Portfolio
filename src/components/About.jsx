@@ -2,6 +2,9 @@ import Reveal from "./Reveal";
 import CountUp from "./CountUp";
 import { useLanguage } from "../context/LanguageContext";
 import { translations } from "../i18n/translations";
+import flagAr from "../assets/flags/ar.svg";
+import flagGb from "../assets/flags/gb.svg";
+import flagBr from "../assets/flags/br.svg";
 
 export default function About() {
     const { lang } = useLanguage();
@@ -29,13 +32,16 @@ export default function About() {
                     </p>
 
                     <div className="flex flex-wrap justify-center gap-3 mb-10">
-                        <span className="px-3 py-1 font-mono text-xs border border-accent/30 rounded-full opacity-85">
+                        <span className="inline-flex items-center gap-2 px-3 py-1 font-mono text-xs border border-accent/30 rounded-full opacity-85">
+                            <img src={flagAr} alt="" className="w-4 h-3 rounded-[2px] object-cover" />
                             {t.langNative}
                         </span>
-                        <span className="px-3 py-1 font-mono text-xs border border-accent/30 rounded-full opacity-85">
+                        <span className="inline-flex items-center gap-2 px-3 py-1 font-mono text-xs border border-accent/30 rounded-full opacity-85">
+                            <img src={flagGb} alt="" className="w-4 h-3 rounded-[2px] object-cover" />
                             {t.langBasic}
                         </span>
-                        <span className="px-3 py-1 font-mono text-xs border border-accent/30 rounded-full opacity-85">
+                        <span className="inline-flex items-center gap-2 px-3 py-1 font-mono text-xs border border-accent/30 rounded-full opacity-85">
+                            <img src={flagBr} alt="" className="w-4 h-3 rounded-[2px] object-cover" />
                             {t.langInter}
                         </span>
                     </div>

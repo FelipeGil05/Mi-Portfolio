@@ -1,21 +1,18 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useLanguage } from "../context/LanguageContext";
 import { translations } from "../i18n/translations";
+import { isPrerender } from "../utils/prerender";
+
+const sectionIds = ["home", "about", "skills", "experience", "education", "projects"];
 
 const Nav = () => {
     const [isOpen, setIsOpen] = useState(false);
+    const [activeSection, setActiveSection] = useState("home");
     const menuRef = useRef(null);
     const { lang, toggleLang } = useLanguage();
     const t = translations[lang].nav;
 
-    const links = [
-        { href: "#home", label: t.home },
-        { href: "#about", label: t.about },
-        { href: "#skills", label: t.skills },
-        { href: "#experience", label: t.experience },
-        { href: "#education", label: t.education },
-        { href: "#projects", label: t.projects },
-    ];
+    const links = sectionIds.map((id) => ({ id, href: `#${id}`, label: t[id] }));
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -27,6 +24,38 @@ const Nav = () => {
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
+
+    useEffect(() => {
+        // Igual que el resto de los efectos de scroll del sitio: no corre
+        // durante la captura de prerender, para que el HTML estático siempre
+        // arranque con "home" activo (coincide con el primer render real).
+        if (isPrerender()) return;
+
+        const sections = sectionIds.map((id) => document.getElementById(id)).filter(Boolean);
+        const visible = {};
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    visible[entry.target.id] = entry.isIntersecting;
+                });
+                const current = sectionIds.filter((id) => visible[id]);
+                if (current.length > 0) {
+                    setActiveSection(current[current.length - 1]);
+                }
+            },
+            { rootMargin: "-45% 0px -50% 0px", threshold: 0 }
+        );
+
+        sections.forEach((s) => observer.observe(s));
+        return () => observer.disconnect();
+    }, []);
+
+    const linkClass = (id) =>
+        `transition-colors ${activeSection === id
+            ? "text-accent glow-text"
+            : "opacity-80 hover:opacity-100 hover:text-accent"
+        }`;
 
     return (
         <nav className="fixed w-full z-50 bg-void/80 backdrop-blur-md border-b border-accent/15 py-4 px-6">
@@ -46,7 +75,7 @@ const Nav = () => {
                             <a
                                 key={link.href}
                                 href={link.href}
-                                className="opacity-80 hover:opacity-100 hover:text-accent transition-colors"
+                                className={linkClass(link.id)}
                             >
                                 {link.label}
                             </a>
@@ -100,7 +129,7 @@ const Nav = () => {
                                     key={link.href}
                                     href={link.href}
                                     onClick={() => setIsOpen(false)}
-                                    className="px-4 py-2 hover:bg-accent/10 hover:text-accent rounded transition-colors"
+                                    className={`px-4 py-2 rounded ${linkClass(link.id)}`}
                                 >
                                     {link.label}
                                 </a>

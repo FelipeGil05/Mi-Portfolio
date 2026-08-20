@@ -7,11 +7,6 @@ import { isPrerender } from "../utils/prerender";
 
 export default function Home() {
     const [copied, setCopied] = useState(false);
-    // Carga perezosa manual (sin Suspense): React.lazy/Suspense necesita
-    // marcadores especiales que solo emite react-dom/server, no una
-    // captura de navegador como la del prerender, así que hidratar contra
-    // un <Suspense> ahí rompe React. Este patrón simple (estado que arranca
-    // en null, se completa en un efecto) hidrata sin problemas.
     const [Hero3D, setHero3D] = useState(null);
     const { lang } = useLanguage();
     const t = translations[lang].home;
