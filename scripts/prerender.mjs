@@ -3,15 +3,16 @@
 // the resulting DOM back into dist/index.html, so the server response
 // already contains the painted page (no JS execution needed for first paint).
 // main.jsx hydrates over this markup instead of re-rendering it from scratch.
+//
+// Uses puppeteer (bundles its own Chromium) instead of a system browser so
+// this works the same on a dev machine and on Vercel's Linux build servers.
 
 import { createServer } from "node:http";
 import { readFile, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import path from "node:path";
-import { execFile } from "node:child_process";
-import { promisify } from "node:util";
+import puppeteer from "puppeteer";
 
-const execFileAsync = promisify(execFile);
 const distDir = path.resolve("dist");
 const port = 4321;
 
@@ -21,6 +22,7 @@ const mime = {
   ".css": "text/css",
   ".png": "image/png",
   ".jpg": "image/jpeg",
+  ".webp": "image/webp",
   ".svg": "image/svg+xml",
   ".woff2": "font/woff2",
   ".pdf": "application/pdf",
@@ -48,37 +50,33 @@ function startServer() {
   return new Promise((resolve) => server.listen(port, () => resolve(server)));
 }
 
-function findEdge() {
-  const candidates = [
-    "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
-    "C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe",
-  ];
-  for (const c of candidates) if (existsSync(c)) return c;
-  throw new Error("Edge not found");
-}
-
 async function main() {
   const server = await startServer();
   console.log(`Prerender server listening on http://localhost:${port}`);
 
-  const edge = findEdge();
-  const profileDir = path.join(process.env.TEMP || "/tmp", "prerender_profile");
+  const browser = await puppeteer.launch({
+    headless: true,
+    args: ["--no-sandbox", "--disable-gpu"],
+  });
 
-  const { stdout } = await execFileAsync(edge, [
-    "--headless=new",
-    "--disable-gpu",
-    "--no-sandbox",
-    `--user-data-dir=${profileDir}`,
-    "--dump-dom",
-    "--virtual-time-budget=4000",
-    `http://localhost:${port}/?prerender=1`,
-  ], { maxBuffer: 20 * 1024 * 1024 });
+  let html;
+  try {
+    const page = await browser.newPage();
+    await page.goto(`http://localhost:${port}/?prerender=1`, {
+      waitUntil: "networkidle0",
+      timeout: 30000,
+    });
+    // Deja asentar un frame extra para que efectos de montaje terminen.
+    await new Promise((r) => setTimeout(r, 300));
+    html = await page.content();
+  } finally {
+    await browser.close();
+    server.close();
+  }
 
-  server.close();
-
-  let html = stdout.trim();
-  if (!html.startsWith("<!DOCTYPE") && !html.startsWith("<html")) {
-    throw new Error("Unexpected dump-dom output, aborting prerender to avoid corrupting index.html");
+  html = html.trim();
+  if (!html.toLowerCase().startsWith("<!doctype") && !html.startsWith("<html")) {
+    throw new Error("Unexpected page content, aborting prerender to avoid corrupting index.html");
   }
   if (!html.toLowerCase().startsWith("<!doctype")) {
     html = "<!doctype html>\n" + html;
