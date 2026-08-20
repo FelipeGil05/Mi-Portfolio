@@ -1,5 +1,6 @@
 // src/context/LanguageContext.jsx
 import { createContext, useContext, useEffect, useState } from "react";
+import { isPrerender } from "../utils/prerender";
 
 const LanguageContext = createContext(null);
 
@@ -16,11 +17,18 @@ export function LanguageProvider({ children }) {
     const [lang, setLang] = useState("es");
 
     useEffect(() => {
+        // Durante la captura de prerender NO se cambia de idioma: el
+        // navegador headless de esa build (Vercel usa @sparticuz/chromium)
+        // puede reportar navigator.language="en-US" por defecto, lo que
+        // haría que el HTML estático quede en inglés mientras el cliente
+        // real siempre arranca en "es" -> mismatch de hidratación.
+        if (isPrerender()) return;
         const preferred = detectPreferredLang();
         if (preferred !== "es") setLang(preferred);
     }, []);
 
     useEffect(() => {
+        if (isPrerender()) return;
         localStorage.setItem("lang", lang);
         document.documentElement.lang = lang;
     }, [lang]);
