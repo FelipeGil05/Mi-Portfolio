@@ -4,11 +4,11 @@ import Reveal from "./Reveal";
 import ImageLightbox from "./ImageLightbox";
 import { useLanguage } from "../context/LanguageContext";
 import { translations } from "../i18n/translations";
-import chatbot1 from "../assets/img/chatbot-1-menu.png";
-import chatbot2 from "../assets/img/chatbot-2-tessel.png";
-import chatbot3 from "../assets/img/chatbot-3-datos.png";
-import chatbot4 from "../assets/img/chatbot-4-confirmacion.png";
-import chatbot5 from "../assets/img/chatbot-5-precio.png";
+import chatbot1 from "../assets/img/chatbot-1-menu.webp";
+import chatbot2 from "../assets/img/chatbot-2-tessel.webp";
+import chatbot3 from "../assets/img/chatbot-3-datos.webp";
+import chatbot4 from "../assets/img/chatbot-4-confirmacion.webp";
+import chatbot5 from "../assets/img/chatbot-5-precio.webp";
 
 const imagesByIndex = [
     [chatbot1, chatbot2, chatbot3, chatbot4, chatbot5],
@@ -62,6 +62,8 @@ export default function Experience() {
                                         <img
                                             src={exp.images[getPreviewIndex(idx)]}
                                             alt={`${exp.title} - captura ${getPreviewIndex(idx) + 1}`}
+                                            loading="lazy"
+                                            decoding="async"
                                             className="w-full h-full object-contain"
                                         />
                                     </button>
@@ -87,7 +89,7 @@ export default function Experience() {
                                                 </svg>
                                             </button>
                                             <span className="absolute bottom-2 left-1/2 -translate-x-1/2 font-mono text-[10px] text-accent bg-void/70 border border-accent/30 rounded-full px-2 py-0.5">
-                                                {getPreviewIndex(idx) + 1} / {exp.images.length}
+                                                {`${getPreviewIndex(idx) + 1} / ${exp.images.length}`}
                                             </span>
                                         </>
                                     )}

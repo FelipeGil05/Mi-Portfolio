@@ -4,8 +4,8 @@ import { createPortal } from "react-dom";
 import Reveal from "./Reveal";
 import { useLanguage } from "../context/LanguageContext";
 import { translations } from "../i18n/translations";
-import gestionclub from "../assets/img/gestionclub.png";
-import distribuidora from "../assets/img/distribuidora.png";
+import gestionclub from "../assets/img/gestionclub.webp";
+import distribuidora from "../assets/img/distribuidora.webp";
 
 const extrasByIndex = [
     { img: gestionclub, github: "https://github.com/Juarba/Front-end-GestionClub" },
@@ -60,6 +60,8 @@ export default function Projects() {
                                     <img
                                         src={project.img}
                                         alt={project.title}
+                                        loading="lazy"
+                                        decoding="async"
                                         className="project-image w-full h-48 object-cover"
                                     />
                                 </div>
@@ -75,6 +77,7 @@ export default function Projects() {
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         onClick={(e) => e.stopPropagation()}
+                                        aria-label={`GitHub - ${project.title}`}
                                         className="opacity-70 hover:opacity-100 hover:text-accent transition-colors"
                                     >
                                         <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -105,10 +108,11 @@ export default function Projects() {
                             id="modalClose"
                             className="absolute top-3 right-3 text-white hover:text-accent text-2xl font-bold z-10"
                             onClick={closeModal}
+                            aria-label={lang === "en" ? "Close" : "Cerrar"}
                         >
                             &times;
                         </button>
-                        <img src={modalData.img} className="w-full max-h-[45vh] object-cover" />
+                        <img src={modalData.img} alt={modalData.title} className="w-full max-h-[45vh] object-cover" />
                         <div className="p-6" style={{ backgroundColor: "#050607" }}>
                             <h3 className="text-xl font-display font-semibold mb-2">{modalData.title}</h3>
                             <p className="text-sm opacity-70 mb-2">{t.techLabel}</p>

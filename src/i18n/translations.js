@@ -73,6 +73,7 @@ export const translations = {
         education: {
             eyebrow: "Aprendizaje continuo",
             title: "Formación",
+            certLabel: "Ver certificado",
             items: [
                 {
                     title: "Tecnicatura Universitaria en Programación",
@@ -204,6 +205,7 @@ export const translations = {
         education: {
             eyebrow: "Continuous learning",
             title: "Education",
+            certLabel: "View certificate",
             items: [
                 {
                     title: "University Technician Degree in Programming",

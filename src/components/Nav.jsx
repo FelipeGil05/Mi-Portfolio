@@ -40,7 +40,7 @@ const Nav = () => {
                 </div>
 
                 {/* Menú de escritorio */}
-                <div className="hidden md:flex items-center gap-8">
+                <div className="hidden lg:flex items-center gap-8">
                     <div className="flex space-x-8 font-mono text-sm">
                         {links.map((link) => (
                             <a
@@ -63,7 +63,7 @@ const Nav = () => {
                 </div>
 
                 {/* Menú móvil */}
-                <div className="md:hidden flex items-center gap-3" ref={menuRef}>
+                <div className="lg:hidden flex items-center gap-3" ref={menuRef}>
                     <button
                         onClick={toggleLang}
                         className="font-mono text-xs border border-accent/30 rounded-full px-2.5 py-1 text-accent hover:bg-accent/10 transition-colors"
@@ -75,6 +75,8 @@ const Nav = () => {
                     <button
                         className="text-accent"
                         onClick={() => setIsOpen(!isOpen)}
+                        aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
+                        aria-expanded={isOpen}
                     >
                         <svg
                             className="w-6 h-6"

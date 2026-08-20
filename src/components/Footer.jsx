@@ -1,18 +1,17 @@
 // src/components/Footer.jsx
-import React from "react";
-
 const Footer = () => {
 const year = new Date().getFullYear();
 return (
 <footer className="py-8 bg-void border-t border-accent/15 content-section">
     <div className="container mx-auto px-6 text-center">
-    <p className="font-mono text-xs opacity-60">© {year} Felipe Gil</p>
-    <p className="font-mono text-xs opacity-40 mt-1">Funes, Santa Fe, Argentina</p>
+    <p className="font-mono text-xs opacity-60">{`© ${year} Felipe Gil`}</p>
+    <p className="font-mono text-xs opacity-60 mt-1">Funes, Santa Fe, Argentina</p>
     <div className="flex justify-center space-x-6 mt-5">
         <a
         href="https://github.com/FelipeGil05"
         target="_blank"
         rel="noopener noreferrer"
+        aria-label="GitHub"
         className="opacity-70 hover:opacity-100 hover:text-accent transition-colors"
         >
         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -23,6 +22,7 @@ return (
         href="https://www.linkedin.com/in/felipe-gil-604332337/"
         target="_blank"
         rel="noopener noreferrer"
+        aria-label="LinkedIn"
         className="opacity-70 hover:opacity-100 hover:text-accent transition-colors"
         >
         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -33,6 +33,7 @@ return (
         href="https://wa.me/5493416521573"
         target="_blank"
         rel="noopener noreferrer"
+        aria-label="WhatsApp"
         className="opacity-70 hover:opacity-100 hover:text-accent transition-colors"
         >
         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">

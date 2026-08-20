@@ -8,8 +8,17 @@ if ("scrollRestoration" in window.history) {
 }
 window.scrollTo(0, 0);
 
-ReactDOM.createRoot(document.getElementById("root")).render(
+const rootEl = document.getElementById("root");
+const app = (
   <React.StrictMode>
     <App />
   </React.StrictMode>
 );
+
+if (rootEl.hasChildNodes()) {
+  // El HTML ya viene pre-renderizado (build de producción): hidratar en vez
+  // de volver a montar desde cero, para que el primer pintado no espere a React.
+  ReactDOM.hydrateRoot(rootEl, app);
+} else {
+  ReactDOM.createRoot(rootEl).render(app);
+}

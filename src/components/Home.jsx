@@ -1,17 +1,27 @@
-import { useState, Suspense, lazy } from "react";
+import { useState, useEffect } from "react";
 import CVFelipeGilES from "../assets/CVFelipeGil.pdf";
 import CVFelipeGilEN from "../assets/CVFelipeGil_English.pdf";
 import { useLanguage } from "../context/LanguageContext";
 import { translations } from "../i18n/translations";
-
-const Hero3D = lazy(() => import("./Hero3D"));
+import { isPrerender } from "../utils/prerender";
 
 export default function Home() {
     const [copied, setCopied] = useState(false);
+    // Carga perezosa manual (sin Suspense): React.lazy/Suspense necesita
+    // marcadores especiales que solo emite react-dom/server, no una
+    // captura de navegador como la del prerender, así que hidratar contra
+    // un <Suspense> ahí rompe React. Este patrón simple (estado que arranca
+    // en null, se completa en un efecto) hidrata sin problemas.
+    const [Hero3D, setHero3D] = useState(null);
     const { lang } = useLanguage();
     const t = translations[lang].home;
     const cvFile = lang === "en" ? CVFelipeGilEN : CVFelipeGilES;
     const cvFileName = lang === "en" ? "CVFelipeGil_English.pdf" : "CVFelipeGil.pdf";
+
+    useEffect(() => {
+        if (isPrerender()) return;
+        import("./Hero3D").then((mod) => setHero3D(() => mod.default));
+    }, []);
 
     const handleCopy = () => {
         navigator.clipboard.writeText("felipeegil05@gmail.com");
@@ -25,17 +35,15 @@ export default function Home() {
             className="min-h-screen flex items-center relative overflow-hidden content-section"
         >
             {/* Objeto 3D decorativo, solo en el hero */}
-            <div className="hidden md:block absolute right-0 top-1/2 -translate-y-1/2 w-[440px] lg:w-[560px] h-[440px] lg:h-[560px] translate-x-1/4">
-                <Suspense fallback={null}>
-                    <Hero3D />
-                </Suspense>
+            <div className="hidden lg:block absolute right-0 top-1/2 -translate-y-1/2 w-[440px] xl:w-[560px] h-[440px] xl:h-[560px] translate-x-1/4">
+                {Hero3D && <Hero3D />}
             </div>
 
             <div className="container mx-auto px-6 relative z-10">
                 <div className="max-w-2xl">
                     <p className="eyebrow mb-5">{t.eyebrow}</p>
 
-                    <h1 className="text-4xl md:text-6xl font-display font-bold mb-4 glow-text typewriter">
+                    <h1 className="text-4xl md:text-6xl font-display font-bold mb-4 glow-text">
                         Felipe Gil
                     </h1>
                     <h2 className="text-xl md:text-2xl mb-2 font-display font-semibold">

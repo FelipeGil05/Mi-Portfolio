@@ -1,5 +1,6 @@
 // src/components/CursorTrail.jsx
 import { useEffect, useRef } from "react";
+import { isPrerender } from "../utils/prerender";
 
 const CHAIN_LENGTH = 10;
 const EASE = 0.35;
@@ -10,6 +11,11 @@ export default function CursorTrail() {
     const canvasRef = useRef(null);
 
     useEffect(() => {
+        // No tocar el canvas durante la captura de prerender: fijar
+        // width/height ahí quedaría grabado en el HTML estático y no
+        // coincidiría con el primer render del cliente real (hidratación).
+        if (isPrerender()) return;
+
         const isFinePointer = window.matchMedia("(pointer: fine)").matches;
         if (!isFinePointer) return;
 

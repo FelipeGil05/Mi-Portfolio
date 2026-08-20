@@ -3,12 +3,22 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 const LanguageContext = createContext(null);
 
+function detectPreferredLang() {
+    const stored = localStorage.getItem("lang");
+    if (stored === "es" || stored === "en") return stored;
+    return navigator.language?.toLowerCase().startsWith("en") ? "en" : "es";
+}
+
 export function LanguageProvider({ children }) {
-    const [lang, setLang] = useState(() => {
-        const stored = localStorage.getItem("lang");
-        if (stored === "es" || stored === "en") return stored;
-        return navigator.language?.toLowerCase().startsWith("en") ? "en" : "es";
-    });
+    // Siempre arranca en "es" para que el primer render coincida con el HTML
+    // pre-renderizado (evita mismatches de hidratación). La preferencia real
+    // del visitante se aplica en el efecto de abajo, después de montar.
+    const [lang, setLang] = useState("es");
+
+    useEffect(() => {
+        const preferred = detectPreferredLang();
+        if (preferred !== "es") setLang(preferred);
+    }, []);
 
     useEffect(() => {
         localStorage.setItem("lang", lang);

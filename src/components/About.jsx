@@ -1,4 +1,5 @@
 import Reveal from "./Reveal";
+import CountUp from "./CountUp";
 import { useLanguage } from "../context/LanguageContext";
 import { translations } from "../i18n/translations";
 
@@ -41,11 +42,11 @@ export default function About() {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="text-center p-5 cyber-panel rounded-xl">
-                            <div className="text-3xl font-display font-bold text-accent glow-text">2+</div>
+                            <CountUp target={2} suffix="+" className="text-3xl font-display font-bold text-accent glow-text" />
                             <div className="text-sm opacity-70 mt-1">{t.statYears}</div>
                         </div>
                         <div className="text-center p-5 cyber-panel rounded-xl">
-                            <div className="text-3xl font-display font-bold text-accent glow-text">4+</div>
+                            <CountUp target={4} suffix="+" className="text-3xl font-display font-bold text-accent glow-text" />
                             <div className="text-sm opacity-70 mt-1">{t.statProjects}</div>
                         </div>
                     </div>

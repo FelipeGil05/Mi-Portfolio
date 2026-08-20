@@ -52,7 +52,7 @@ export default function ImageLightbox({ images, index, onClose, onNavigate }) {
                 />
                 {images.length > 1 && (
                     <span className="font-mono text-xs text-accent">
-                        {index + 1} / {images.length}
+                        {`${index + 1} / ${images.length}`}
                     </span>
                 )}
             </div>

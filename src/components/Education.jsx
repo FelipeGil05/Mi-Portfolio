@@ -2,6 +2,11 @@
 import Reveal from "./Reveal";
 import { useLanguage } from "../context/LanguageContext";
 import { translations } from "../i18n/translations";
+import certDesarrolloAplicaciones from "../assets/certificados/cert-desarrollo-aplicaciones.png";
+import certAiAutomation from "../assets/certificados/cert-ai-automation.pdf";
+import certAiAutomationAvanzado from "../assets/certificados/cert-ai-automation-avanzado.pdf";
+
+const certByIndex = [null, certDesarrolloAplicaciones, certAiAutomation, certAiAutomationAvanzado];
 
 export default function Education() {
     const { lang } = useLanguage();
@@ -38,6 +43,19 @@ export default function Education() {
                                             <li key={i}>{b}</li>
                                         ))}
                                     </ul>
+                                    {certByIndex[idx] && (
+                                        <a
+                                            href={certByIndex[idx]}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="inline-flex items-center gap-1.5 mt-4 font-mono text-xs text-accent hover:opacity-80 transition-opacity"
+                                        >
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            {t.certLabel}
+                                        </a>
+                                    )}
                                 </Reveal>
                             </div>
                         ))}

@@ -1,8 +1,10 @@
 // src/components/ScrollTopButton.jsx
 import { useState, useEffect } from "react";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function ScrollTopButton() {
     const [visible, setVisible] = useState(false);
+    const { lang } = useLanguage();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -33,6 +35,8 @@ export default function ScrollTopButton() {
     return (
         <button
             onClick={scrollToTop}
+            aria-label={lang === "en" ? "Scroll to top" : "Volver arriba"}
+            tabIndex={visible ? 0 : -1}
             className={`fixed bottom-6 right-6 z-50 bg-void border border-accent/40 text-accent hover:bg-accent hover:text-void p-3 rounded-full shadow-[0_0_18px_rgba(56,224,255,0.25)] transition-all duration-300
         ${visible ? "opacity-100" : "opacity-0 pointer-events-none"}`}
         >
