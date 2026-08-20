@@ -4,14 +4,37 @@
 // already contains the painted page (no JS execution needed for first paint).
 // main.jsx hydrates over this markup instead of re-rendering it from scratch.
 //
-// Uses puppeteer (bundles its own Chromium) instead of a system browser so
-// this works the same on a dev machine and on Vercel's Linux build servers.
+// Locally (or any non-Vercel machine) this uses the full "puppeteer" package,
+// which bundles a matching Chromium for whatever OS it's installed on. On
+// Vercel's build servers the OS image is missing the shared libraries a
+// normal Chromium needs (libnspr4, etc.) and there's no way to apt-get them,
+// so there we use @sparticuz/chromium instead: a Chromium build compiled
+// specifically to run in minimal serverless/CI Linux containers.
 
 import { createServer } from "node:http";
 import { readFile, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import path from "node:path";
-import puppeteer from "puppeteer";
+
+async function launchBrowser() {
+  if (process.env.VERCEL) {
+    const [{ default: chromium }, { default: puppeteerCore }] = await Promise.all([
+      import("@sparticuz/chromium"),
+      import("puppeteer-core"),
+    ]);
+    return puppeteerCore.launch({
+      args: [...chromium.args, "--no-sandbox", "--disable-gpu"],
+      executablePath: await chromium.executablePath(),
+      headless: true,
+    });
+  }
+
+  const { default: puppeteer } = await import("puppeteer");
+  return puppeteer.launch({
+    headless: true,
+    args: ["--no-sandbox", "--disable-gpu"],
+  });
+}
 
 const distDir = path.resolve("dist");
 const port = 4321;
@@ -54,10 +77,7 @@ async function main() {
   const server = await startServer();
   console.log(`Prerender server listening on http://localhost:${port}`);
 
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: ["--no-sandbox", "--disable-gpu"],
-  });
+  const browser = await launchBrowser();
 
   let html;
   try {
